@@ -7,15 +7,30 @@
     <link rel="stylesheet" href="styles.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
-    <div class="container" x-data="rssReader">
-        <div class="retro-graphics" id="retroGraphics">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXOuAAAABmJLR0QA/wD/AP+gvaeTAAAAsklEQVR4nO3BMQEAAADCoPVPbQcIOoAAAAAAAP//q2cAAAECAAAAwIBuwUIAAAAASUVORK5CYII=" alt="Retro Graphic 1">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXOuAAAABmJLR0QA/wD/AP+gvaeTAAAApElEQVR4nO3BoREAACAEMd/t+WqXkQEAAADAdTvmAAABAgAAAMAANl0AAIAAABwKxgwAAAAASUVORK5CYII=" alt="Retro Graphic 2">
-        </div>
-
+<body x-data="rssReader" x-init="init()">
+    <div class="welcomecontainer">
         <h1 class="main-headline">The Daily Dispatch</h1>
-
+        <div class="welcome">
+            <img class="ibmpc-floated" src="ibmpc.png" alt="IBM PC">
+            <p class="weather-paragraph">
+               <span class="weather-location" x-text="weather.current.location"></span>'s current conditions are:
+                <span class="weather-temperature" x-text="weather.current.temperature"></span>°F,
+                <span class="weather-description" x-text="weather.description"></span> with a
+                <span x-text="weather.current.precipitation"></span>% chance of precipitation, and wind at
+                <span x-text="weather.current.windSpeed"></span> mph from the
+                <span x-text="weather.current.windDirection"></span>.
+                Today's forecast includes a high of <span x-text="weather.daily.high"></span>°F,
+                a low of <span x-text="weather.daily.low"></span>°F,
+                <span x-text="weather.daily.precipitationChance"></span>% chance of rain, wind gusts of <span x-text="weather.daily.windGusts"></span> mph, and a sunrise at
+                 <span x-text="weather.daily.sunrise"></span> and sunset at <span x-text="weather.daily.sunset"></span>.
+            </p>
+            <div class="fake-logo">
+                <img src="dailydispatchlogo.png" alt="Fake Daily Dispatch Logo">
+                <p><span style="font-size:1.4em; font-weight:bold;">D</span>ispatch</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
         <template x-for="(section, key) in feeds" :key="key">
             <div class="news-tab">
                 <h2 class="tab-header" x-text="formatSectionTitle(key)"></h2>
