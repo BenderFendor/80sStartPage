@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro News Daily</title>
+    <style>
+        body {
+            font-family: 'Garamond', serif;
+            margin: 0;
+            background-color: #f8f0e3; /* Cream paper background */
+            color: #000;
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACgmZT/AAAAEklEQVQYV2NkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='); /* Subtle grainy texture */
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .retro-graphics {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            opacity: 1;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        .retro-graphics img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .main-headline {
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 60px;
+            letter-spacing: -2px;
+        }
+
+        .news-tab {
+            margin-bottom: 40px;
+            position: relative;
+            overflow: visible;
+            flex: 1;
+        }
+
+        .tab-header {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .article {
+            margin-bottom: 40px;
+        }
+
+        .article-headline {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .article-content {
+            font-size: 1em;
+            color: #333;
+        }
+
+        .local-weather {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 5px;
+        }
+
+        /* Scrolling animation styles */
+        .scrolling-out {
+            opacity: 0;
+            transform: translate(-50%, -80%);
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .navigation button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .rss-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+        }
+
+        .rss-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .feed-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .feed-item h4 {
+            margin: 0 0 10px 0;
+        }
+
+        .feed-item a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .feed-item a:hover {
+            text-decoration: underline;
+        }
+
+        .article img {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 15px;
+            border-radius: 5px;
+        }
+
+        .article a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .article a:hover {
+            text-decoration: underline;
+        }
+
+        .scroll-buttons {
+            display: none; /* Hide scroll buttons since we're using page scroll */
+        }
+
+        #feed-container {
+            max-height: none;
+            overflow-y: visible;
+            padding-right: 0;
+        }
+
+        #feed-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #feed-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #feed-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        /* Remove weather and navigation related styles */
+        .local-weather, .navigation {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/rss-parser@3.12.0/dist/rss-parser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="retro-graphics" id="retroGraphics">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXOuAAAABmJLR0QA/wD/AP+gvaeTAAAAsklEQVR4nO3BMQEAAADCoPVPbQcIOoAAAAAAAP//q2cAAAECAAAAwIBuwUIAAAAASUVORK5CYII=" alt="Retro Graphic 1">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXOuAAAABmJLR0QA/wD/AP+gvaeTAAAApElEQVR4nO3BoREAACAEMd/t+WqXkQEAAADAdTvmAAABAgAAAMAANl0AAIAAABwKxgwAAAAASUVORK5CYII=" alt="Retro Graphic 2">
+        </div>
+
+        <h1 class="main-headline">The Daily Dispatch</h1>
+
+        <div class="news-tab">
+            <h2 class="tab-header">Game News</h2>
+            <div id="feed-container">
+                <div id="game-news-feed"></div>
+            </div>
+        </div>
+
+        <div class="news-tab">
+            <h2 class="tab-header">Local News</h2>
+            <div id="feed-container">
+                <div id="local-news-feed"></div>
+            </div>
+        </div>
+
+        <div class="news-tab">
+            <h2 class="tab-header">Tech Today</h2>
+            <div id="feed-container">
+                <div id="tech-news-feed"></div>
+            </div>
+        </div>
+
+        <div class="news-tab">
+            <h2 class="tab-header">Entertainment</h2>
+            <div id="feed-container">
+                <div id="entertainment-feed"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const retroGraphics = document.getElementById('retroGraphics');
+        let scrollPosition = 0;
+        const newsTabs = document.querySelectorAll('.news-tab');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                retroGraphics.classList.add('scrolling-out');
+            } else {
+                retroGraphics.classList.remove('scrolling-out');
+            }
+        });
+
+        // Add feed scrolling function
+        function scrollFeed(elementId, amount) {
+            const container = document.getElementById('feed-container');
+            if (container) {
+                container.scrollBy({
+                    top: amount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Updated RSS Feed handling
+        const RSS2JSON_API_KEY = 'qh2q0gl5hgbz4zpwh9kbz1mfdmaw1kdot0jxsumw'; // Get free API key from rss2json.com
+        
+        async function fetchFeed(rssUrl, elementId, maxItems = 5) {
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=${RSS2JSON_API_KEY}&count=${maxItems}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    const container = document.getElementById(elementId);
+                    container.innerHTML = ''; // Clear existing content
+                    
+                    data.items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'feed-item';
+                        div.innerHTML = `
+                            <h4><a href="${item.link}" target="_blank">${item.title}</a></h4>
+                            <p>${item.description.replace(/<[^>]*>/g, '').slice(0, 150)}...</p>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                console.error(`Error fetching feed for ${elementId}:`, err);
+                document.getElementById(elementId).innerHTML = '<p>Unable to load feed at this time</p>';
+            }
+        }
+
+        // Load RSS feeds
+        document.addEventListener('DOMContentLoaded', () => {
+            // Using more reliable RSS feeds
+            fetchFeed('https://blog.google/rss/', 'google-news-feed');
+            fetchFeed('https://techcrunch.com/feed/', 'tech-news-feed');
+            fetchFeed('https://www.gamespot.com/feeds/news/', 'epic-games-feed');
+        });
+
+        // Updated RSS Feed handling with categories
+        const feeds = {
+            games: [
+                'https://feed.phenx.de/lootscraper_epic_game.xml',
+                'https://www.gamespot.com/feeds/news/'
+            ],
+            local: [
+                'https://news.google.com/rss/search?q=Philadelphia',
+                'https://www.npr.org/rss/rss.php?id=1001'
+            ],
+            tech: [
+                'https://news.google.com/rss/search?q=artificial+intelligence',
+                'https://techcrunch.com/feed/'
+            ],
+            entertainment: [
+                'https://www.theanimedaily.com/feed/',
+                'https://rss.nytimes.com/services/xml/rss/nyt/Books.xml'
+            ]
+        };
+
+        async function fetchAndMergeFeed(urls, elementId, maxItems = 8) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            container.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const allItems = [];
+                
+                for (const url of urls) {
+                    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${RSS2JSON_API_KEY}&count=${maxItems}`;
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    
+                    if (data.status === 'ok') {
+                        allItems.push(...data.items);
+                    }
+                }
+                
+                // Sort by date and limit to maxItems
+                const sortedItems = allItems
+                    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+                    .slice(0, maxItems);
+                
+                container.innerHTML = sortedItems.map(item => {
+                    const imageHtml = item.enclosure?.link || item.thumbnail ? 
+                        `<img src="${item.enclosure?.link || item.thumbnail}" alt="${item.title}" loading="lazy">` : '';
+                    
+                    return `
+                        <div class="article">
+                            ${imageHtml}
+                            <h3 class="article-headline"><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                            <p class="article-content">${item.description.replace(/<[^>]*>/g, '').slice(0, 150)}...</p>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error(`Error fetching feeds for ${elementId}:`, err);
+                container.innerHTML = '<p>Unable to load news at this time</p>';
+            }
+        }
+
+        // Load all feeds
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndMergeFeed(feeds.games, 'game-news-feed');
+            fetchAndMergeFeed(feeds.local, 'local-news-feed');
+            fetchAndMergeFeed(feeds.tech, 'tech-news-feed');
+            fetchAndMergeFeed(feeds.entertainment, 'entertainment-feed');
+        });
+    </script>
+</body>
+</html>
