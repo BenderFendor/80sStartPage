@@ -3,7 +3,7 @@ document.addEventListener('alpine:init', () => {
         feeds: {
             MajorNews: {
                 psychology: { 
-                    url: 'https://corsproxy.io/?url=https://www.psychologytoday.com/us/front/feed',
+                    url: 'https://rss.app/feeds/XPibKdvcWhqOBAWZ.xml',
                     id: 'psychology-feed',
                     title: 'Psychology Today'
                 },
@@ -23,7 +23,7 @@ document.addEventListener('alpine:init', () => {
                     title: 'Wall Street Journal'
                 },
                 cnn: {
-                    url: 'https://api.allorigins.win/raw?url=http://rss.cnn.com/rss/cnn_topstories.rss',
+                    url: 'https://api.allorigins.win/raw?url=https://news.google.com/rss/search?q=site%3Acnn.com&hl=en-US&gl=US&ceid=US%3Aen',
                     id: 'cnn-feed',
                     title: 'CNN Top Stories'
                 },

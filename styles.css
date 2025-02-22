@@ -101,11 +101,16 @@ body {
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 10px;
+    color: #f8f0e3;
 }
 
 .article-content {
     font-size: 1em;
-    color: #333;
+    color: #cecece;
+}
+.article a {
+    font-size: 1em;
+    color: #cecece;
 }
 
 .scrolling-out {
